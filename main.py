@@ -35,23 +35,6 @@ def ccache_stats(head, output):
 def ccache_set_dir(path):
     return call_cmd(f"ccache --set-config cache_dir={path}")
 
-def ccache_setup():
-    # compilers = ["gcc", "g++", "cc", "c++"]
-    # cmd = ""
-    # for c in compilers:
-    #     cmd += f"ln -s /usr/bin/ccache /usr/local/bin/{c} ; "
-    cmd = "export PATH=/usr/lib/ccache:$PATH"
-    # return call_cmd(cmd).returncode
-    os.system(cmd)
-
-def ccache_disable():
-    # compilers = ["gcc", "g++", "cc", "c++"]
-    # cmd = ""
-    # for c in compilers:
-    #     cmd += f"rm -f /usr/local/bin/{c} ; "
-    # cmd = "echo $PATH | cut -d ':' -f2-"
-    # return call_cmd(cmd).returncode
-    pass
 
 # --------------------------------------------------------------------------
 
@@ -202,9 +185,7 @@ def main():
 
     if args.ccache:
         debug("* Ccache")
-        # debug("  - Setting symbolic links")
-        # ccache_setup()
-        debug("  - Setting cache path")
+        debug("  - Setting cache directory")
         ccache_set_dir(ccache_cachedir)
         debug("  - Setting cache size")
         ccache_set_size(1, 'T')
@@ -256,13 +237,6 @@ def main():
         git_commit("Clean build")
         if args.ccache:
             ccache_stats(c, CCACHE_STATS)
-
-    if args.ccache:
-        debug("* Disabling Ccache")
-        if not args.keep_cache:
-            debug("* Cleaning cache")
-            ccache_clean()
-        # ccache_disable()
 
 
 if __name__ == "__main__":
