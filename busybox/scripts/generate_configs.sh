@@ -13,7 +13,6 @@ while [[ $i -le $NB_CONFIGS ]] ;
 do
     make randconfig >> /dev/null 2>&1
     CKSUM=$(sed '4d' $CONFIG | cksum)
-    echo "$CKSUM"
     if [[ ! $(grep "$CKSUM" $DB_FILE) ]] ; then
         echo "$CKSUM" >> $DB_FILE
         ii=$(printf "%04d" $i)
