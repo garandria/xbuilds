@@ -13,8 +13,11 @@ DUMMY_NAME = "Tux"
 
 # --------------------------------------------------------------------------
 
-def call_cmd(cmd):
-    return subprocess.run(cmd, capture_output=True, shell=True)
+def call_cmd(cmd, cwd='.'):
+    return subprocess.run(cmd,
+                          capture_output=True,
+                          shell=True,
+                          cwd=cwd)
 
 # --------------------------------------------------------------------------
 
