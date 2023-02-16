@@ -131,6 +131,9 @@ def git_config(prefix, field, val):
     cmd = f"git config {prefix}.{field} \"{val}\""
     return call_cmd(cmd)
 
+def git_clone(src, dst):
+    cmd = f"git clone --no-hardlinks {src}"
+    return call_cmd(cmd, cwd=dst)
 # --------------------------------------------------------------------------
 
 def debug(msg, end="\n"):
