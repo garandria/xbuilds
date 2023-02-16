@@ -134,6 +134,11 @@ def git_config(prefix, field, val):
 def git_clone(src, dst):
     cmd = f"git clone --no-hardlinks {src}"
     return call_cmd(cmd, cwd=dst)
+
+def git_pull(from_repo):
+    cmd = "git pull"
+    return call_cmd(cmd, cwd=from_repo)
+
 # --------------------------------------------------------------------------
 
 def debug(msg, end="\n"):
