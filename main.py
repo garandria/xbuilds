@@ -99,7 +99,7 @@ def git_init(directory="."):
     return call_cmd(cmd)
 
 def git_add_all():
-    cmd = "git add -f *"
+    cmd = "git add -fA"
     return call_cmd(cmd)
 
 def git_commit(msg):
