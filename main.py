@@ -172,6 +172,10 @@ def main():
                         action="store_true",
                         default=False,
                         help="Enable ccache")
+    parser.add_argument("--ccache_dir",
+                        type=str,
+                        default="../cache",
+                        help="Name of ccache's cache directory")
     parser.add_argument("--target",
                         type=str,
                         required=True,
