@@ -80,11 +80,9 @@ def build(jobs=None, config=None, with_time=True, ccache=False):
 def build_status():
     pass
 
-def build_is_ok():
-    with open(BULID_EXIT_STATUS, 'r') as status:
-        lines = status.readlines()
-    return int(lines[-1]) == 0
-    # return not os.path.isfile(BUILD_STDERR)
+def build_is_ok(target):
+    cmd = f"grep 'error:' {BUILD_STDERR}"
+    return os.path.isfile(target) and not call_cmd(cmd).returncode == 0
 
 def get_build_time():
     if not os.path.isfile(TIME_OUTPUT_FILE):
