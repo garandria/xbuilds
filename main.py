@@ -273,15 +273,16 @@ def main():
                     os.remove(to_delete)
 
         c_path = '/'.join([configs, c])
-        debug("[] Build:", end=" ")
+        debug(f"[{c}] Build --", end=" ")
         status = \
             build(jobs=None, config=c_path, with_time=True, ccache=with_ccache)
         time = get_build_time()
-        binary_size = 0
-        if os.path.isfile(args.target):
-            binary_size = os.path.getsize(args.target)
-        debug(f"time={time}s,succes={status==0},binary={binary_size}")
-        result_stream.write(f"{time},{status==0},{binary_size}")
+        success = build_is_ok(target_binary)
+        binary_size = None
+        if success:
+            binary_size = os.path.getsize(target_binary)
+        debug(f"time: {time}s,succes: {success},binary: {binary_size}")
+        result_stream.write(f"{time},{success},{binary_size}\n")
         debug("[git] Add all")
         git_add_all()
         debug("[git] Commit: Clean build")
