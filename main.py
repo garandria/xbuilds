@@ -180,6 +180,9 @@ def main():
                         type=str,
                         required=True,
                         help="Name of the generated binary")
+    parser.add_argument("--backup",
+                        type=str,
+                        help="Path to backup directory.")
 
     args = parser.parse_args()
 
