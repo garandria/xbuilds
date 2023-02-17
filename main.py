@@ -246,33 +246,46 @@ def main():
     debug(f"[fs] Change directory {source}")
     os.chdir(source)
 
+    repo_initialization()
+    debug("=== Starting builds ===")
 
     result_stream = open(results_csv, 'w')
     result_stream.write("config,time(s),success,binary")
 
-    debug("* Builds")
-    confs = os.listdir(conf_set)
+    confs = os.listdir(configs)
     confs.sort()
     for c in confs:
-        if not args.incremental:
+
+        if not with_incremental:
+            debug("[git] Checkout: master")
             git_checkout("master")
-        debug(f"  - {c},", end="")
+
+        debug(f"[git] Create branch: {c}")
         git_create_branch(c)
-        if args.incremental:
+
+        if with_incremental:
             for to_delete in {BUILD_STDOUT, BUILD_STDERR, BUILD_EXIT_STATUS}:
                 if os.path.isfile(to_delete):
+                    debug(f"[fs] Removing {to_delete}")
                     os.remove(to_delete)
-        c_path = '/'.join([conf_set, c])
-        status = build(jobs=None, config=c_path, with_time=True, ccache=args.ccache)
+
+        c_path = '/'.join([configs, c])
+        debug("[] Build:", end=" ")
+        status = \
+            build(jobs=None, config=c_path, with_time=True, ccache=with_ccache)
         time = get_build_time()
         binary_size = 0
         if os.path.isfile(args.target):
             binary_size = os.path.getsize(args.target)
-        debug(f"{time}s, ok={status==0}, size={binary_size}")
+        debug(f"time={time}s,succes={status==0},binary={binary_size}")
         result_stream.write(f"{time},{status==0},{binary_size}")
+        debug("[git] Add all")
         git_add_all()
+        debug("[git] Commit: Clean build")
         git_commit("Clean build")
-        if args.ccache:
+
+        if with_ccache:
+            debug(f"[Ccache] Statistics -> {CCACHE_STATS}")
             ccache_stats(c, CCACHE_STATS)
     result_stream.close()
 
