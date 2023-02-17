@@ -3,7 +3,7 @@ import subprocess
 import shutil
 import argparse
 
-CCACHE_STATS = "/srv/local/grandria/ccache-stats.txt"
+CCACHE_STATS = "../ccache-stats.txt"
 TIME_OUTPUT_FILE = "time"
 BUILD_STDOUT = "stdout"
 BUILD_STDERR = "stderr"
