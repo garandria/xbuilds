@@ -10,6 +10,7 @@ BUILD_STDERR = "stderr"
 BUILD_EXIT_STATUS = "exit_status"
 DUMMY_EMAIL = "tux@tux.com"
 DUMMY_NAME = "Tux"
+TRACEFILES = "tracefiles"
 
 # --------------------------------------------------------------------------
 
@@ -288,6 +289,14 @@ def main():
         if backup:
             debug(f"[git] (Backup) git pull from {backup}")
             git_pull(backup)
+            for to_save in \
+                {BUILD_STDOUT, BUILD_STDERR, BUILD_EXIT_STATUS, target_binary}:
+                if os.path.isfile(to_save):
+                    debug(f"[fs] (Backup) Copying files:", end=" ")
+                    debug(f"{to_save}", end=" ")
+                    new_name = '_'.join([c, to_save])
+                    to_save_path = '/'.join([backup, TRACEFILES, new_name])
+                    shutil.copy(to_save, to_save_path)
 
     result_stream.close()
 
