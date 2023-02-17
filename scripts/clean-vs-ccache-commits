@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# $1: nb of commits
+# set -x
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git \
+    > /dev/null 2>&1
+pushd linux > /dev/null
+COMMITS=$(git rev-list -n $1 v5.13)
+BLOATOMETER=scripts/bloat-o-meter
+JOBS=128
+ccache -Ccz > /dev/null 2>&1
+echo "commit,time_clean,time_ccache,same"
+for c in $COMMITS ; do
+    git clean -dfx > /dev/null 2>&1
+    git checkout $c > /dev/null 2>&1
+    make defconfig  > /dev/null 2>&1
+    time_clean=$({ /usr/bin/time --format="%e" \
+                               make -j$JOBS > /dev/null ; } 2>&1)
+    mv vmlinux /tmp/
+    git clean -dfx  > /dev/null 2>&1
+    make defconfig  > /dev/null 2>&1
+    time_ccache=$({ /usr/bin/time --format="%e" \
+                                make CC="ccache gcc" -j$JOBS > /dev/null ; } 2>&1)
+    same_bin=$(\
+               ($BLOATOMETER vmlinux /tmp/vmlinux | grep "chg +0.00%" > /dev/null) \
+                   && echo "true" \
+                       || echo "false")
+    echo "$c,$time_clean,$time_ccache,$same_bin"
+    rm /tmp/vmlinux
+done
+popd > /dev/null
