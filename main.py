@@ -160,27 +160,11 @@ def repo_initialization():
         debug("[git] Committing source")
         git_commit("source")
 
-def ccache_initialization(with_ccache, ccache_cachedir):
-    if with_ccache:
-        debug("[Ccache] Enabled")
-        debug("[Ccache] Setting cache directory:", ccache_cachedir)
-        ccache_set_dir(ccache_cachedir)
-        debug("[Ccache] Setting cache size: 1To")
-        ccache_set_size(1, 'T')
-
-        if not args.keep_cache:
-            debug("[Ccache] Deep clean")
-            ccache_clean()
-
-        ccache_stats("Initialization", CCACHE_STATS)
-    else:
-        debug("[Ccache] Disabled")
-
 # --------------------------------------------------------------------------
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Linux Builds')
+    parser = argparse.ArgumentParser(description="eXtrem Builds [xbuilds]")
     parser.add_argument("--src",
                         type=str,
                         required=True,
@@ -234,22 +218,44 @@ def main():
     backup = args.backup
     results_csv = args.results
     with_incremental = args.incremental
+    target_binary = args.target
 
     if source.endswith('/'):
         source = configs[:-1]
     if configs.endswith('/'):
         configs = configs[:-1]
 
-    ccache_initialization(with_ccache, ccache_cachedir)
+    if with_ccache:
+        debug("[Ccache] Enabled")
+        debug(f"[Ccache] Setting cache directory: {ccache_cachedir}")
+        ccache_set_dir(ccache_cachedir)
+        debug("[Ccache] Setting cache size: 1To")
+        ccache_set_size(1, 'T')
+        if not keep_cache:
+            debug("[Ccache] Deep clean")
+            ccache_clean()
+
+        ccache_stats("Initialization", CCACHE_STATS)
+    else:
+        debug("[Ccache] Disabled")
+
 
     debug(f"[fs] Change directory {source}")
     os.chdir(source)
 
     repo_initialization()
+
+    if backup:
+        if backup.endswith('/'):
+            backup = backup[:-1]
+        git_clone(source, backup)
+        os.mkdir('/'.join([backup, TRACEFILES]))
+
+
     debug("=== Starting builds ===")
 
     result_stream = open(results_csv, 'w')
-    result_stream.write("config,time(s),success,binary")
+    result_stream.write("config,time(s),success,binary\n")
 
     confs = os.listdir(configs)
     confs.sort()
