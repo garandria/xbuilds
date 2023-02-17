@@ -183,11 +183,9 @@ def main():
     parser.add_argument("--src",
                         type=str,
                         required=True,
-                        dest="linux_src",
-                        help="Path to the Linux Kernel's source directory")
+                        help="Path to the project's source directory")
     parser.add_argument("--configs",
                         type=str,
-                        dest="configurations",
                         required=True,
                         help="Path to the folder that contains configurations")
     parser.add_argument("--incremental",
