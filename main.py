@@ -159,6 +159,22 @@ def repo_initialization():
         debug("[git] Committing source")
         git_commit("source")
 
+def ccache_initialization(with_ccache, ccache_cachedir):
+    if with_ccache:
+        debug("[Ccache] Enabled")
+        debug("[Ccache] Setting cache directory:", ccache_cachedir)
+        ccache_set_dir(ccache_cachedir)
+        debug("[Ccache] Setting cache size: 1To")
+        ccache_set_size(1, 'T')
+
+        if not args.keep_cache:
+            debug("[Ccache] Deep clean")
+            ccache_clean()
+
+        ccache_stats("Initialization", CCACHE_STATS)
+    else:
+        debug("[Ccache] Disabled")
+
 # --------------------------------------------------------------------------
 
 def main():
@@ -220,18 +236,7 @@ def main():
 
     ccache_cachedir = "/srv/local/grandria/cache"
 
-    if args.ccache:
-        debug("* Ccache")
-        debug("  - Setting cache directory")
-        ccache_set_dir(ccache_cachedir)
-        debug("  - Setting cache size")
-        ccache_set_size(1, 'T')
-        debug("  - Cleaning cache")
-        if not args.keep_cache:
-            ccache_clean()
-
-    if args.ccache:
-        ccache_stats("Initialization", CCACHE_STATS)
+    ccache_initialization(with_ccache, ccache_cachedir)
 
     debug(f"* Moving to {linux}")
     os.chdir(linux)
