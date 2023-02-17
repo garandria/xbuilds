@@ -221,25 +221,30 @@ def main():
 
     args = parser.parse_args()
 
-    if not os.path.isdir(args.linux_src):
-        raise FileNotFoundError(f"No such directory: {args.linux_src}")
+    if not os.path.isdir(args.src):
+        raise FileNotFoundError(f"No such directory: {args.src}")
 
-    if not os.path.isdir(args.configurations):
-        raise FileNotFoundError(f"No such directory: {args.configurations}")
+    if not os.path.isdir(args.configs):
+        raise FileNotFoundError(f"No such directory: {args.configs}")
 
-    linux = args.linux_src
-    conf_set = args.configurations
-    if args.linux_src.endswith('/'):
-        linux = args.linux_src[:-1]
-    if args.configurations.endswith('/'):
-        conf_set = args.configurations[:-1]
+    source = args.src
+    configs = args.configs
+    with_ccache = args.ccache
+    keep_cache = args.keep_cache
+    ccache_cachedir = args.ccache_dir
+    backup = args.backup
+    results_csv = args.results
+    with_incremental = args.incremental
 
-    ccache_cachedir = "/srv/local/grandria/cache"
+    if source.endswith('/'):
+        source = configs[:-1]
+    if configs.endswith('/'):
+        configs = configs[:-1]
 
     ccache_initialization(with_ccache, ccache_cachedir)
 
-    debug(f"* Moving to {linux}")
-    os.chdir(linux)
+    debug(f"[fs] Change directory {source}")
+    os.chdir(source)
 
 
 
