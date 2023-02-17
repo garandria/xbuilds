@@ -1,0 +1,41 @@
+#!/bin/bash
+
+
+DB_FILE=.db
+CONFIG=.config
+OUT_DIR=randconfig_generated
+NB_CONFIGS=$1
+CONFIG_BASE=config.base
+
+# Configuration preset
+# We want x86_64 configurations only
+# Disable AIC7(X|9)XX_BUILD_FIRMWARE because source of error [1]
+# Disable CONFIG_GCC_PLUGINS
+# [1] https://hal.inria.fr/hal-02147012v2/document
+
+cat <<EOF > $CONFIG_BASE
+CONFIG_64BIT=y
+CONFIG_AIC7XXX_BUILD_FIRMWARE=n
+CONFIG_AIC79XX_BUILD_FIRMWARE=n
+CONFIG_HAVE_GCC_PLUGINS=n
+CONFIG_GCC_PLUGINS=n
+EOF
+
+touch $DB_FILE
+mkdir -p $OUT_DIR
+
+i=1
+while [[ $i -le $NB_CONFIGS ]] ;
+do
+    KCONFIG_ALLCONFIG=$CONFIG_BASE make randconfig >/dev/null
+    CKSUM=$(cksum $CONFIG | cut -d ' ' -f1,2)
+    if [[ ! $(grep "$CKSUM" $DB_FILE) ]] ; then
+        echo "$CKSUM" >> $DB_FILE
+        ii=$(printf "%04d" $i)
+        mv $CONFIG $OUT_DIR/${ii}_randconfig
+        i=$[$i+1]
+    fi
+done
+
+
+rm $DB_FILE
