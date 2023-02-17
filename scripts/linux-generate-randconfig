@@ -10,7 +10,7 @@ CONFIG_BASE=config.base
 # Configuration preset
 # We want x86_64 configurations only
 # Disable AIC7(X|9)XX_BUILD_FIRMWARE because source of error [1]
-# Disable CONFIG_GCC_PLUGINS
+# Disable CONFIG_GCC_PLUGINS et al.
 # [1] https://hal.inria.fr/hal-02147012v2/document
 
 cat <<EOF > $CONFIG_BASE
@@ -19,6 +19,7 @@ CONFIG_AIC7XXX_BUILD_FIRMWARE=n
 CONFIG_AIC79XX_BUILD_FIRMWARE=n
 CONFIG_HAVE_GCC_PLUGINS=n
 CONFIG_GCC_PLUGINS=n
+CONFIG_GCC_PLUGIN_CYC_COMPLEXITY=n
 EOF
 
 touch $DB_FILE
