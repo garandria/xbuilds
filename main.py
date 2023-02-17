@@ -287,6 +287,10 @@ def main():
         if with_ccache:
             debug(f"[Ccache] Statistics -> {CCACHE_STATS}")
             ccache_stats(c, CCACHE_STATS)
+        if backup:
+            debug(f"[git] (Backup) git pull from {backup}")
+            git_pull(backup)
+
     result_stream.close()
 
 
