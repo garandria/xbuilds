@@ -247,6 +247,8 @@ def main():
     os.chdir(source)
 
 
+    result_stream = open(results_csv, 'w')
+    result_stream.write("config,time(s),success,binary")
 
     debug("* Builds")
     confs = os.listdir(conf_set)
@@ -267,10 +269,12 @@ def main():
         if os.path.isfile(args.target):
             binary_size = os.path.getsize(args.target)
         debug(f"{time}s, ok={status==0}, size={binary_size}")
+        result_stream.write(f"{time},{status==0},{binary_size}")
         git_add_all()
         git_commit("Clean build")
         if args.ccache:
             ccache_stats(c, CCACHE_STATS)
+    result_stream.close()
 
 
 if __name__ == "__main__":
