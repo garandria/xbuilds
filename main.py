@@ -183,6 +183,10 @@ def main():
     parser.add_argument("--backup",
                         type=str,
                         help="Path to backup directory.")
+    parser.add_argument("--results",
+                        type=str,
+                        default="../results.csv",
+                        help="CSV file that contains the results")
 
     args = parser.parse_args()
 
