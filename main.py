@@ -3,7 +3,6 @@ import subprocess
 import shutil
 import argparse
 
-CCACHE_STATS = "../ccache-stats.txt"
 TIME_OUTPUT_FILE = "time"
 BUILD_STDOUT = "stdout"
 BUILD_STDERR = "stderr"
@@ -173,6 +172,11 @@ def main():
                         type=str,
                         default="../cache",
                         help="Name of ccache's cache directory")
+    parser.add_argument("--ccache-stats",
+                        dest="ccache_stats_dir",
+                        type=str,
+                        default="../ccache-stats.txt",
+                        help="Path to file to write ccache's stats")
     parser.add_argument("--target",
                         type=str,
                         required=True,
@@ -202,6 +206,7 @@ def main():
     results_csv = args.results
     with_incremental = args.incremental
     target_binary = args.target
+    ccache_stats_dir = args.ccache_stats_dir
 
     if source.endswith('/'):
         source = configs[:-1]
@@ -218,7 +223,7 @@ def main():
             debug("[Ccache] Deep clean")
             ccache_clean()
 
-        ccache_stats("Initialization", CCACHE_STATS)
+        ccache_stats("Initialization", ccache_stats_dir)
     else:
         debug("[Ccache] Disabled")
 
@@ -287,8 +292,8 @@ def main():
         git_commit("Clean build")
 
         if with_ccache:
-            debug(f"[Ccache] Statistics -> {CCACHE_STATS}")
-            ccache_stats(c, CCACHE_STATS)
+            debug(f"[Ccache] Statistics -> {ccache_stats_dir}")
+            ccache_stats(c, ccache_stats_dir)
         if backup:
             debug(f"[git] (Backup) git pull from {backup}")
             git_pull(f"{backup}/{source.split('/')[-1]}")
