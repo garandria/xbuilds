@@ -307,7 +307,17 @@ def main():
                     shutil.copy(to_save, to_save_path)
             debug("")
 
+    debug("[fs] End: closing results stream")
     result_stream.close()
+
+    if backup:
+        debug("[fs] (Backup) Copying {results_csv} -> {backup}")
+        shutil.copy(results_csv, backup)
+        if with_ccache:
+            debug("[Ccache/fs] (Backup) Copying {ccache_stats_dir} -> {backup}")
+            shutil.copy(ccache_stats_dir, backup)
+            debug("[Ccache/fs] (Backup) Copying {ccache_cachedir} -> {backup}")
+            shutil.copytree(ccache_cachedir, f"{backup}/ccache")
 
 
 if __name__ == "__main__":
