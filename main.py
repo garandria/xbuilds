@@ -38,6 +38,9 @@ def ccache_stats(head, output):
 def ccache_set_dir(path):
     return call_cmd(f"ccache --set-config cache_dir={path}")
 
+def ccache_enable_debug():
+    cmd = "ccache --set-config debug=true"
+    return call_cmd(cmd).returncode
 
 # --------------------------------------------------------------------------
 
@@ -188,6 +191,11 @@ def main():
                         type=str,
                         default="../results.csv",
                         help="CSV file that contains the results")
+    parser.add_argument("--debug",
+                        action="store_true",
+                        dest="ccache_debug",
+                        default=False,
+                        help="Enables debug for ccache")
 
     args = parser.parse_args()
 
@@ -207,6 +215,8 @@ def main():
     with_incremental = args.incremental
     target_binary = args.target
     ccache_stats_dir = args.ccache_stats_dir
+    with_debug = args.ccache_debug
+
 
     if source.endswith('/'):
         source = configs[:-1]
@@ -222,6 +232,9 @@ def main():
         if not keep_cache:
             debug("[Ccache] Deep clean")
             ccache_clean()
+
+        if with_debug:
+            ccache_enable_debug()
 
         ccache_stats("Initialization", ccache_stats_dir)
     else:
