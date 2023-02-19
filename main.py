@@ -143,21 +143,6 @@ def git_pull(from_repo):
 def debug(msg, end="\n"):
     print(msg, end=end, flush=True)
 
-def repo_initialization():
-    debug("[git] Setting git")
-    if os.path.isdir(".git"):
-        debug("[git] Already a git repo")
-    else:
-        debug("[git] Initialization")
-        git_init()
-        debug(f"[git] Configuration: user.email={DUMMY_EMAIL}, user.name={DUMMY_NAME}")
-        git_config("user", "email", DUMMY_EMAIL)
-        git_config("user", "name", DUMMY_NAME)
-        debug("[git] Adding everything")
-        git_add_all()
-        debug("[git] Committing source")
-        git_commit("source")
-
 # --------------------------------------------------------------------------
 
 def main():
@@ -241,7 +226,20 @@ def main():
     debug(f"[fs] Change directory {source}")
     os.chdir(source)
 
-    repo_initialization()
+    debug("[git] Setting git")
+    if os.path.isdir(".git"):
+        debug("[git] Already a git repo")
+    else:
+        debug("[git] Initialization")
+        git_init()
+        debug(f"[git] Configuration: user.email={DUMMY_EMAIL}, user.name={DUMMY_NAME}")
+        git_config("user", "email", DUMMY_EMAIL)
+        git_config("user", "name", DUMMY_NAME)
+        debug("[git] Adding everything")
+        git_add_all()
+        debug("[git] Committing source")
+        git_commit("source")
+
 
     if backup:
         if backup.endswith('/'):
