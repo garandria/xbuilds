@@ -245,7 +245,7 @@ def main():
         if backup.endswith('/'):
             backup = backup[:-1]
         git_clone(source, backup)
-        os.mkdir('/'.join([backup, TRACEFILES]))
+        os.mkdirs('/'.join([backup, TRACEFILES]), exist_ok=True)
 
 
     debug("=== Starting builds ===")
