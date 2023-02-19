@@ -291,7 +291,7 @@ def main():
             ccache_stats(c, CCACHE_STATS)
         if backup:
             debug(f"[git] (Backup) git pull from {backup}")
-            git_pull(backup)
+            git_pull(f"{backup}/{source.split('/')[-1]}")
             debug(f"[fs] (Backup) Copying files:", end=" ")
             for to_save in \
                 {BUILD_STDOUT, BUILD_STDERR, BUILD_EXIT_STATUS, target_binary}:
