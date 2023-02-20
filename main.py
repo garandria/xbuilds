@@ -298,7 +298,7 @@ def main():
         if success:
             binary_size = os.path.getsize(target_binary)
         debug(f"time: {time}s,succes: {success},binary: {binary_size}")
-        result_stream.write(f"{time},{success},{binary_size}\n")
+        result_stream.write(f"{c},{time},{success},{binary_size}\n")
         debug("[git] Add all")
         git_add_all()
         debug("[git] Commit: Clean build")
