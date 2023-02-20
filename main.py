@@ -83,7 +83,7 @@ def build_status():
     pass
 
 def build_is_ok(target):
-    cmd = f"grep ': fatal error:' {BUILD_STDERR}"
+    cmd = f"egrep '((:fatal)|(gcc:)|(collect2:)) error:' {BUILD_STDERR}"
     return os.path.isfile(target) and not call_cmd(cmd).returncode == 0
 
 def get_build_time():
