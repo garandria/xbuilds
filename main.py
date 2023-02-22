@@ -258,10 +258,10 @@ def main():
         debug("[git] Committing source")
         git_commit("source")
 
-
     if backup:
         if backup.endswith('/'):
             backup = backup[:-1]
+        debug(f"[git] Clone {source} -> {backup}")
         git_clone(source, backup)
         os.makedirs('/'.join([backup, TRACEFILES]), exist_ok=True)
 
