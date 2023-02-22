@@ -196,6 +196,11 @@ def main():
                         dest="ccache_debug",
                         default=False,
                         help="Enables debug for ccache")
+    parser.add_argument("--no-git-backup",
+                        action="store_true",
+                        dest="no_git_backup",
+                        default=False,
+                        help="Disable git backup")
 
     args = parser.parse_args()
 
@@ -216,6 +221,7 @@ def main():
     target_binary = args.target
     ccache_stats_dir = args.ccache_stats_dir
     with_debug = args.ccache_debug
+    no_git_backup = args.no_git_backup
 
 
     if source.endswith('/'):
@@ -261,8 +267,9 @@ def main():
     if backup:
         if backup.endswith('/'):
             backup = backup[:-1]
-        debug(f"[git] Clone {source} -> {backup}")
-        git_clone(source, backup)
+        if not no_git_backup:
+            debug(f"[git] Clone {source} -> {backup}")
+            git_clone(source, backup)
         os.makedirs('/'.join([backup, TRACEFILES]), exist_ok=True)
 
 
@@ -308,8 +315,9 @@ def main():
             debug(f"[Ccache] Statistics -> {ccache_stats_dir}")
             ccache_stats(c, ccache_stats_dir)
         if backup:
-            debug(f"[git] (Backup) git pull from {backup}")
-            git_pull(f"{backup}/{source.split('/')[-1]}")
+            if not no_git_backup:
+                debug(f"[git] (Backup) git pull from {backup}")
+                git_pull(f"{backup}/{source.split('/')[-1]}")
             debug(f"[fs] (Backup) Copying files:", end=" ")
             for to_save in \
                 {BUILD_STDOUT, BUILD_STDERR, BUILD_EXIT_STATUS, target_binary}:
